@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  event-feed-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - CORS_ORIGIN=http://localhost:3000
+    volumes:
+      - ./logs:/app/logs:rw
+    healthcheck:
+      test: ["CMD", "node", "-e", "const http = require('http'); const options = { hostname: 'localhost', port: 3000, path: '/api/health', timeout: 2000 }; const req = http.request(options, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - event-feed-network
+
+networks:
+  event-feed-network:
+    driver: bridge
+
+# Development override example
+# To use: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+# Create docker-compose.dev.yml for development overrides

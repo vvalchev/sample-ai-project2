@@ -1,0 +1,54 @@
+{
+  "name": "real-time-event-feed",
+  "version": "1.0.0",
+  "description": "Real-time multi-tenant event broadcasting system with strict tenant isolation",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vvalchev/sample-ai-project2.git"
+  },
+  "keywords": [
+    "real-time",
+    "websocket", 
+    "multi-tenant",
+    "event-broadcasting",
+    "express",
+    "socket.io"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vvalchev/sample-ai-project2/issues"
+  },
+  "homepage": "https://github.com/vvalchev/sample-ai-project2#readme",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.4.1",
+    "express-validator": "^7.2.0",
+    "helmet": "^8.0.0",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "eslint": "^9.17.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "socket.io-client": "^4.8.1",
+    "supertest": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
