@@ -23,7 +23,7 @@ class SocketService {
       cors: corsOptions,
       transports: ['websocket', 'polling'],
       pingTimeout: 60000,
-      pingInterval: 25000
+      pingInterval: 25000,
     });
 
     // Add tenant validation middleware
@@ -45,7 +45,7 @@ class SocketService {
     eventService.on('eventCreated', ({ tenantId, event }) => {
       this.broadcastToTenant(tenantId, event);
     });
-    
+
     console.log('[SOCKET_SERVICE] Subscribed to EventService events');
   }
 
@@ -55,10 +55,10 @@ class SocketService {
    */
   handleConnection(socket) {
     const tenantId = socket.tenantId;
-    
+
     // Join tenant-specific room
     socket.join(tenantId);
-    
+
     // Track connection
     if (!this.connectedClients.has(tenantId)) {
       this.connectedClients.set(tenantId, new Set());
@@ -71,7 +71,7 @@ class SocketService {
     socket.emit('connection_established', {
       tenantId: tenantId,
       timestamp: new Date().toISOString(),
-      message: 'Connected to event stream'
+      message: 'Connected to event stream',
     });
 
     // Send recent events to newly connected client
@@ -80,7 +80,7 @@ class SocketService {
       if (recentEvents.length > 0) {
         socket.emit('initial_events', {
           events: recentEvents,
-          count: recentEvents.length
+          count: recentEvents.length,
         });
       }
     } catch (error) {
@@ -110,11 +110,11 @@ class SocketService {
    */
   handleDisconnection(socket, reason) {
     const tenantId = socket.tenantId;
-    
+
     // Remove from tracking
     if (this.connectedClients.has(tenantId)) {
       this.connectedClients.get(tenantId).delete(socket.id);
-      
+
       // Clean up empty tenant sets
       if (this.connectedClients.get(tenantId).size === 0) {
         this.connectedClients.delete(tenantId);
@@ -138,10 +138,12 @@ class SocketService {
     // Broadcast to all sockets in the tenant room
     this.io.to(tenantId).emit('event_created', {
       event: event,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
-    console.log(`[SOCKET_BROADCAST] Tenant: ${tenantId}, Event: ${event.id}, Clients: ${this.getConnectedClientCount(tenantId)}`);
+    console.log(
+      `[SOCKET_BROADCAST] Tenant: ${tenantId}, Event: ${event.id}, Clients: ${this.getConnectedClientCount(tenantId)}`
+    );
   }
 
   /**
@@ -160,7 +162,7 @@ class SocketService {
   getConnectionStats() {
     const stats = {
       totalConnections: 0,
-      tenantConnections: {}
+      tenantConnections: {},
     };
 
     for (const [tenantId, clients] of this.connectedClients) {
@@ -179,7 +181,7 @@ class SocketService {
   broadcastSystemMessage(message) {
     this.io.emit('system_message', {
       message: message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 

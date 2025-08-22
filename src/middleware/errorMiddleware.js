@@ -8,7 +8,7 @@ const config = require('../../config/config');
 /**
  * Global error handler middleware
  */
-const errorHandler = (err, req, res, _next) => {
+const errorHandler = (err, _req, res, _next) => {
   // Log error for debugging
   console.error(`[ERROR] ${new Date().toISOString()} - ${err.message}`);
   console.error(err.stack);
@@ -44,7 +44,7 @@ const errorHandler = (err, req, res, _next) => {
   const errorResponse = {
     error: message,
     code: code,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   // Include stack trace in development mode only
@@ -68,7 +68,7 @@ const notFoundHandler = (req, res) => {
     error: 'Not Found',
     code: 'NOT_FOUND',
     message: `Route ${req.method} ${req.path} not found`,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   res.status(404).json(errorResponse);
@@ -87,10 +87,10 @@ const asyncHandler = (fn) => {
  * Validation error formatter
  */
 const formatValidationErrors = (errors) => {
-  return errors.map(error => ({
+  return errors.map((error) => ({
     field: error.path || error.param,
     message: error.msg || error.message,
-    value: error.value
+    value: error.value,
   }));
 };
 
@@ -113,5 +113,5 @@ module.exports = {
   notFoundHandler,
   asyncHandler,
   formatValidationErrors,
-  AppError
+  AppError,
 };

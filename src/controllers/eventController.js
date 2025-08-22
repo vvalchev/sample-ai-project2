@@ -21,7 +21,7 @@ const createEvent = async (req, res, next) => {
         error: 'Validation failed',
         code: 'VALIDATION_ERROR',
         details: formattedErrors,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -35,14 +35,15 @@ const createEvent = async (req, res, next) => {
     const event = eventService.createEvent(tenantId, sanitizedMessage);
 
     // Log event creation for monitoring
-    console.log(`[EVENT_CREATED] ${new Date().toISOString()} - Tenant: ${tenantId}, Event: ${event.id}`);
+    console.log(
+      `[EVENT_CREATED] ${new Date().toISOString()} - Tenant: ${tenantId}, Event: ${event.id}`
+    );
 
     res.status(201).json({
       success: true,
       data: event,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     next(error);
   }
@@ -52,14 +53,14 @@ const createEvent = async (req, res, next) => {
  * Get events for a tenant
  * GET /api/events
  */
-  const getEvents = async (req, res, next) => {
+const getEvents = async (req, res, next) => {
   try {
     const tenantId = req.tenantId; // Set by tenant middleware
     const limitParam = req.query.limit;
-    const limit = limitParam ? parseInt(limitParam) : 50;
+    const limit = limitParam ? Number.parseInt(limitParam, 10) : 50;
 
     // Validate limit parameter
-    if (limitParam && (isNaN(limit) || limit < 1 || limit > 100)) {
+    if (limitParam && (Number.isNaN(limit) || limit < 1 || limit > 100)) {
       throw new AppError('Limit must be between 1 and 100', 400, 'INVALID_LIMIT');
     }
 
@@ -70,11 +71,10 @@ const createEvent = async (req, res, next) => {
       data: {
         events,
         count: events.length,
-        tenant: tenantId
+        tenant: tenantId,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     next(error);
   }
@@ -84,16 +84,15 @@ const createEvent = async (req, res, next) => {
  * Get event statistics
  * GET /api/events/stats
  */
-const getEventStats = async (req, res, next) => {
+const getEventStats = async (_req, res, next) => {
   try {
     const stats = eventService.getEventStats();
 
     res.status(200).json({
       success: true,
       data: stats,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     next(error);
   }
@@ -103,16 +102,16 @@ const getEventStats = async (req, res, next) => {
  * Health check endpoint
  * GET /api/health
  */
-const healthCheck = async (req, res) => {
+const healthCheck = async (_req, res) => {
   const stats = eventService.getEventStats();
-  
+
   res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
     version: process.env.npm_package_version || '1.0.0',
     uptime: process.uptime(),
     memory: process.memoryUsage(),
-    eventStats: stats
+    eventStats: stats,
   });
 };
 
@@ -120,5 +119,5 @@ module.exports = {
   createEvent,
   getEvents,
   getEventStats,
-  healthCheck
+  healthCheck,
 };

@@ -9,8 +9,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint": "biome check src/",
+    "lint:fix": "biome check --write src/",
+    "format": "biome format --write src/"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,7 @@
   },
   "keywords": [
     "real-time",
-    "websocket", 
+    "websocket",
     "multi-tenant",
     "event-broadcasting",
     "express",
@@ -41,8 +42,8 @@
     "uuid": "^11.0.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
     "@types/node": "^22.10.5",
-    "eslint": "^9.17.0",
     "jest": "^29.7.0",
     "nodemon": "^3.1.9",
     "socket.io-client": "^4.8.1",

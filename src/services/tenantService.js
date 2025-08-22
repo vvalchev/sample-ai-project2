@@ -9,9 +9,9 @@ class TenantService {
   constructor() {
     // In-memory storage for tenant events - Map for better performance
     this.tenantEvents = new Map();
-    
+
     // Initialize supported tenants
-    config.supportedTenants.forEach(tenantId => {
+    config.supportedTenants.forEach((tenantId) => {
       this.tenantEvents.set(tenantId, []);
     });
   }
@@ -41,7 +41,7 @@ class TenantService {
 
     const tenantEvents = this.tenantEvents.get(tenantId);
     tenantEvents.unshift(event); // Add to beginning for chronological order (newest first)
-    
+
     // Optional: Implement memory management (limit number of events per tenant)
     const MAX_EVENTS_PER_TENANT = 1000;
     if (tenantEvents.length > MAX_EVENTS_PER_TENANT) {
@@ -106,7 +106,7 @@ class TenantService {
     for (const [tenantId, events] of this.tenantEvents) {
       stats[tenantId] = {
         eventCount: events.length,
-        memoryEstimate: JSON.stringify(events).length // Rough estimate
+        memoryEstimate: JSON.stringify(events).length, // Rough estimate
       };
     }
     return stats;

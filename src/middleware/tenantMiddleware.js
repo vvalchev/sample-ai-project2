@@ -15,7 +15,7 @@ const validateTenant = (req, res, next) => {
   if (!tenantId) {
     return res.status(400).json({
       error: 'Missing X-Tenant-ID header',
-      code: 'MISSING_TENANT_HEADER'
+      code: 'MISSING_TENANT_HEADER',
     });
   }
 
@@ -24,15 +24,17 @@ const validateTenant = (req, res, next) => {
     return res.status(400).json({
       error: 'Invalid tenant ID',
       code: 'INVALID_TENANT_ID',
-      supportedTenants: tenantService.getSupportedTenants()
+      supportedTenants: tenantService.getSupportedTenants(),
     });
   }
 
   // Add tenant ID to request object for downstream use
   req.tenantId = tenantId;
-  
+
   // Log tenant access for security monitoring
-  console.log(`[TENANT_ACCESS] ${new Date().toISOString()} - Tenant: ${tenantId}, IP: ${req.ip}, Path: ${req.path}`);
+  console.log(
+    `[TENANT_ACCESS] ${new Date().toISOString()} - Tenant: ${tenantId}, IP: ${req.ip}, Path: ${req.path}`
+  );
 
   next();
 };
@@ -46,7 +48,7 @@ const validateTenantQuery = (req, res, next) => {
   if (!tenantId) {
     return res.status(400).json({
       error: 'Missing tenant query parameter',
-      code: 'MISSING_TENANT_QUERY'
+      code: 'MISSING_TENANT_QUERY',
     });
   }
 
@@ -54,7 +56,7 @@ const validateTenantQuery = (req, res, next) => {
     return res.status(400).json({
       error: 'Invalid tenant ID',
       code: 'INVALID_TENANT_ID',
-      supportedTenants: tenantService.getSupportedTenants()
+      supportedTenants: tenantService.getSupportedTenants(),
     });
   }
 
@@ -65,13 +67,16 @@ const validateTenantQuery = (req, res, next) => {
 /**
  * Middleware to sanitize tenant ID input
  */
-const sanitizeTenant = (req, res, next) => {
+const sanitizeTenant = (req, _res, next) => {
   const tenantId = req.headers['x-tenant-id'] || req.query.tenant;
-  
+
   if (tenantId) {
     // Basic sanitization - remove any potentially dangerous characters
-    const sanitized = tenantId.toString().toLowerCase().replace(/[^a-z0-9_-]/g, '');
-    
+    const sanitized = tenantId
+      .toString()
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]/g, '');
+
     if (req.headers['x-tenant-id']) {
       req.headers['x-tenant-id'] = sanitized;
     }
@@ -79,7 +84,7 @@ const sanitizeTenant = (req, res, next) => {
       req.query.tenant = sanitized;
     }
   }
-  
+
   next();
 };
 
@@ -99,9 +104,11 @@ const validateSocketTenant = (socket, next) => {
 
   // Add tenant ID to socket object
   socket.tenantId = tenantId;
-  
+
   // Log WebSocket connection for security monitoring
-  console.log(`[WEBSOCKET_CONNECT] ${new Date().toISOString()} - Tenant: ${tenantId}, Socket: ${socket.id}`);
+  console.log(
+    `[WEBSOCKET_CONNECT] ${new Date().toISOString()} - Tenant: ${tenantId}, Socket: ${socket.id}`
+  );
 
   next();
 };
@@ -110,5 +117,5 @@ module.exports = {
   validateTenant,
   validateTenantQuery,
   sanitizeTenant,
-  validateSocketTenant
+  validateSocketTenant,
 };

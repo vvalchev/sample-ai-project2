@@ -4,14 +4,11 @@
  */
 
 const { v4: uuidv4 } = require('uuid');
-const { EventEmitter } = require('events');
+const { EventEmitter } = require('node:events');
 const config = require('../../config/config');
 const tenantService = require('./tenantService');
 
 class EventService extends EventEmitter {
-  constructor() {
-    super();
-  }
   /**
    * Creates a new event
    * @param {string} tenantId - The tenant identifier
@@ -30,7 +27,9 @@ class EventService extends EventEmitter {
     }
 
     if (message.length > config.maxEventMessageLength) {
-      throw new Error(`Message exceeds maximum length of ${config.maxEventMessageLength} characters`);
+      throw new Error(
+        `Message exceeds maximum length of ${config.maxEventMessageLength} characters`
+      );
     }
 
     // Create event object
@@ -38,7 +37,7 @@ class EventService extends EventEmitter {
       id: uuidv4(),
       tenant_id: tenantId,
       message: message.trim(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Add to tenant's event store
@@ -47,7 +46,7 @@ class EventService extends EventEmitter {
     // Emit event for WebSocket broadcasting
     this.emit('eventCreated', {
       tenantId,
-      event
+      event,
     });
 
     return event;
@@ -86,7 +85,7 @@ class EventService extends EventEmitter {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -118,7 +117,7 @@ class EventService extends EventEmitter {
   getEventStats() {
     const stats = {
       totalEvents: 0,
-      tenantStats: {}
+      tenantStats: {},
     };
 
     for (const tenantId of tenantService.getSupportedTenants()) {

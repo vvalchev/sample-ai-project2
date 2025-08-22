@@ -28,7 +28,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY . .
 
 # Remove development files
-RUN rm -rf tests/ jest.config.js .eslintrc.js
+RUN rm -rf tests/ jest.config.js
 
 # Change ownership to nodejs user
 RUN chown -R nodejs:nodejs /app

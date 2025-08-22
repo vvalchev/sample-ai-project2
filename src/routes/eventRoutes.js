@@ -21,29 +21,22 @@ const createEventValidation = [
     .withMessage('Message cannot be empty')
     .isLength({ max: config.maxEventMessageLength })
     .withMessage(`Message cannot exceed ${config.maxEventMessageLength} characters`)
-    .trim()
+    .trim(),
 ];
 
 // Routes
-router.post('/events', 
+router.post(
+  '/events',
   sanitizeTenant,
   validateTenant,
   createEventValidation,
   asyncHandler(eventController.createEvent)
 );
 
-router.get('/events',
-  sanitizeTenant,
-  validateTenant,
-  asyncHandler(eventController.getEvents)
-);
+router.get('/events', sanitizeTenant, validateTenant, asyncHandler(eventController.getEvents));
 
-router.get('/events/stats',
-  asyncHandler(eventController.getEventStats)
-);
+router.get('/events/stats', asyncHandler(eventController.getEventStats));
 
-router.get('/health',
-  asyncHandler(eventController.healthCheck)
-);
+router.get('/health', asyncHandler(eventController.healthCheck));
 
 module.exports = router;

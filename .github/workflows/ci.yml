@@ -27,19 +27,19 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Run ESLint
+    - name: Run Biome Lint
       run: npm run lint
       
     - name: Check code formatting
       run: |
-        npx eslint --ext .js src/ --format=json > eslint-report.json || true
+        npx biome check --reporter=json src/ > biome-report.json || true
         
-    - name: Upload ESLint report
+    - name: Upload Biome report
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: eslint-report
-        path: eslint-report.json
+        name: biome-report
+        path: biome-report.json
 
   test:
     name: Test Suite

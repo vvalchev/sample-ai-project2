@@ -4,8 +4,8 @@
  */
 
 const express = require('express');
-const http = require('http');
-const path = require('path');
+const http = require('node:http');
+const path = require('node:path');
 const helmet = require('helmet');
 const cors = require('cors');
 const compression = require('compression');
@@ -23,17 +23,19 @@ const app = express();
 const server = http.createServer(app);
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      connectSrc: ["'self'", "ws:", "wss:"],
-      imgSrc: ["'self'", "data:", "https:"]
-    }
-  }
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        connectSrc: ["'self'", 'ws:', 'wss:'],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
+    },
+  })
+);
 
 // CORS configuration
 app.use(cors(config.cors));
@@ -54,7 +56,7 @@ app.set('trust proxy', 1);
 app.use(express.static(path.join(__dirname, '../public')));
 
 // Request logging middleware
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
   console.log(`[HTTP] ${new Date().toISOString()} - ${req.method} ${req.path} - IP: ${req.ip}`);
   next();
 });
@@ -63,7 +65,7 @@ app.use((req, res, next) => {
 app.use('/api', eventRoutes);
 
 // Serve main HTML page
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
@@ -82,9 +84,9 @@ socketService.subscribeToEventService(eventService);
 // Graceful shutdown handling
 process.on('SIGTERM', () => {
   console.log('[APP] SIGTERM received, shutting down gracefully');
-  
+
   socketService.disconnectAll();
-  
+
   server.close(() => {
     console.log('[APP] Server closed');
     process.exit(0);
@@ -93,9 +95,9 @@ process.on('SIGTERM', () => {
 
 process.on('SIGINT', () => {
   console.log('[APP] SIGINT received, shutting down gracefully');
-  
+
   socketService.disconnectAll();
-  
+
   server.close(() => {
     console.log('[APP] Server closed');
     process.exit(0);
